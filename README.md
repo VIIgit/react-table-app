@@ -28,16 +28,54 @@ You can find the most recent information on how to perform common tasks [here](h
 
 ## Install additional npm modules
 
+ajv dependency of react-bootstrap-table
+
 ```sh
 npm install ajv --save
+```
+
+[react-bootstrap-table](https://react-bootstrap-table.github.io/react-bootstrap-table2)
+
+```sh
 npm install react-bootstrap-table-next --save
 npm install react-bootstrap-table2-filter --save
 npm install react-bootstrap-table2-toolkit --save
 ```
+[bootstrap](https://www.npmjs.com/package/bootstrap)
+
+```sh
+npm install react-bootstrap-table-next --save
+```
+
+[css-loader](https://github.com/webpack-contrib/css-loader)
+
+```sh
+#npm install css-loader --save-dev
+```
+
+[window-or-global](https://www.npmjs.com/package/window-or-global)
+
+```sh
+npm install window-or-global --save
+```
+
+[bootstrap](https://www.npmjs.com/package/bootstrap)
+
+npm WARN bootstrap@4.1.3 requires a peer 
+of jquery@1.9.1 - 3 but none is installed.
+of popper.js@^1.14.3 but none is installed. 
+You must install peer dependencies yourself
+
+```sh
+npm install jquery --save
+npm install popper.js --save
+npm install bootstrap --save
+```
+
 
 ## Cleanup generated files
 
-
+"ajv-keywords": "^3.2.0",
 
 ## Build project
 
