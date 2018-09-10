@@ -72,6 +72,11 @@ npm install popper.js --save
 npm install bootstrap --save
 ```
 
+[bootstrap-select](https://www.npmjs.com/package/bootstrap-select)
+
+```sh
+npm install bootstrap-select --save
+```
 
 ## Cleanup generated files
 

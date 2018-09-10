@@ -2,32 +2,15 @@ import React, { Component } from 'react';
 /*import logo from './logo.svg';*/
 import root from 'window-or-global';
 
-import './App.css';
-
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.css';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-import './xxx.css';
-
-/*
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-<!-- Popper JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-
-
-*/
+import 'bootstrap-select/dist/css/bootstrap-select.min.css';
+import './App.css';
 
 import 'popper.js';
 import 'jquery';
 import 'bootstrap';
+import 'bootstrap-select';
 
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter, multiSelectFilter, Comparator } from 'react-bootstrap-table2-filter';
@@ -54,25 +37,15 @@ function myFormatter(cell, row, rowIndex, formatExtraData) {
 }
 
 function linksOfLinks(cell, row, rowIndex, formatExtraData) {
-  const xx = {cell};
   return (
     <div>
       OK
-      <i > {row['id']} {row.id} mmmm 
+      <i > {row['id']} {row.id} 
       
-      {
-        
-        JSON.parse(xx).forEach(element => {
-            <div>element.href</div>
-          })
-
-      }
       </i> 
     </div>
   ) ;
 }
-
-
 
 class App extends Component {
 
@@ -176,19 +149,16 @@ class App extends Component {
     return (
       <div className="App container-fluid">
 
-
         <ToolkitProvider ref={this.table}
           keyField="id"
           data={ this.records } 
           columns={ this.columns } 
           bootstrap4
-          
           search
           >
           {
             props => (
               <div>
-
 
                 <div class="row">
                   <div class="col-12 col-md-8">
@@ -211,8 +181,6 @@ class App extends Component {
             )
           }
         </ToolkitProvider>
-
-
       </div>
     );
   }
@@ -250,28 +218,9 @@ class ViewPicker extends React.Component {
   render() {
 
     return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          View: 
-          <select value={this.state.value} onChange={this.handleChange}>
-           {this.createSelectItems()}
-          </select>
-
-
-<div class="dropdown">
-  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown link
-  </a>
-
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-    <a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>
-  </div>
-</div>
-
-        </label>
-      </form>
+      <select value={this.state.value} onChange={this.handleChange} class="selectpicker">
+        {this.createSelectItems()}
+      </select>
     );
   }
 }
