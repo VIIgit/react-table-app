@@ -11,7 +11,7 @@ var products = [{
 }, {
   id: 3,
   name: 'Product3',
-  price: 8006,
+  price: 8006.03,
   category: 'B'
 }];
 
