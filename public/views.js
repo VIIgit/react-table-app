@@ -28,13 +28,13 @@ products.forEach(function (product) {
   if (!distinct[product.category]){
     distinct[product.category]=[];
   }
-  distinct[product.category].push(product);   
+  distinct[product.category].push(product);
 });
 
 
 var distinctKeys = Object.keys(distinct);
 var products2 = [];
-var id = 0;
+
 distinctKeys.forEach(function (attribute){
   'use strict';
   products2.push({'id' : attribute , 'name' : attribute + '(' + distinct[attribute].length +')', 'products': distinct[attribute]});
@@ -120,26 +120,3 @@ var views = [
     columns: columns3
   }
 ];
-
-
-function readTextFile(fileName, callback){
-
-  var readFile = new XMLHttpRequest();
-  
-  readFile.overrideMimeType('application/json');
-  readFile.open('GET', fileName, true);
-  readFile.onreadystatechange = function(){
-    
-    if (readFile.readyState=== 4 && readFile.status===200){
-      callback(readFile.responseText);
-    }
-  }
-  readFile.send(null);
-}
-/*
-readTextFile("products.json", function(text){
-  var data =  JSON.parse(text);
-  console.log(data);
-});
-
-*/
