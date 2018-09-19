@@ -69,7 +69,7 @@ var views = [{
   },
   {
     name: 'By C',
-    recordsFile: '/products.yaml',
+    recordsFile: '/products.json',
     columns: columns3
   }
 ];
