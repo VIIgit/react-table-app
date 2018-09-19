@@ -2,7 +2,7 @@ var products = [{
   id: 1,
   name: 'Product1',
   price: 120,
-  category: 'AA'
+  category: 'AAA'
 }, {
   id: 2,
   name: 'Product2',
@@ -13,19 +13,61 @@ var products = [{
   name: 'Product3',
   price: 8006,
   category: 'B'
+}, {
+  id: 33,
+  name: 'Product3B',
+  price: 80033,
+  category: 'B'
 }];
+
+
+var distinct = {};
+ 
+products.forEach(function (product) {
+  'use strict';
+  if (!distinct[product.category]){
+    distinct[product.category]=[];
+  }
+  distinct[product.category].push(product);   
+});
+
+
+var distinctKeys = Object.keys(distinct);
+var products2 = [];
+var id = 0;
+distinctKeys.forEach(function (attribute){
+  'use strict';
+  products2.push({'id' : attribute , 'name' : attribute + '(' + distinct[attribute].length +')', 'products': distinct[attribute]});
+});
+
+/*
+
+var thisValue = {};
+const attr = 'sort';
+columns2.map(function(item){
+  'use strict';
+  console.log(item);
+  if (!thisValue[item[attr]]){
+    thisValue[item[attr]] = [];
+  }
+  thisValue[item[attr]].push(item);
+}, thisValue);
+*/
 
 var columns1 = [{
   dataField: 'id',
-  text: 'Product ID'
+  text: 'Product ID',
+  align: 'left'
 }, {
   dataField: 'name',
   text: 'Product Name'
 }, {
   dataField: 'price',
   text: 'Product Price',
-  sort: true
+  sort: true,
+  align: 'right'
 }];
+
 var columns2 = [{
   dataField: 'id',
   text: 'Product ID B'
@@ -39,11 +81,15 @@ var columns2 = [{
   text: 'Product Category B',
   filterMethod: 'multiSelection',
   sort: true
+}, {
+  dataField: 'calc',
+  text: 'A Function'
 }];
 
 var columns3 = [{
   dataField: 'id',
-  text: 'Product ID B'
+  text: 'Product ID B',
+  align: 'left'
 }, {
   dataField: 'name',
   text: 'Product Name B',
@@ -57,19 +103,43 @@ var columns3 = [{
   sort: true
 }];
 
-var views = [{
+var views = [
+  {
     name: 'By A',
     records: products,
     columns: columns1
   },
   {
     name: 'By B',
-    records: products,
+    records: products2,
     columns: columns2
   },
   {
     name: 'By C',
-    recordsFile: '/products.yaml',
+    recordsFile: 'products.json',
     columns: columns3
   }
 ];
+
+
+function readTextFile(fileName, callback){
+
+  var readFile = new XMLHttpRequest();
+  
+  readFile.overrideMimeType('application/json');
+  readFile.open('GET', fileName, true);
+  readFile.onreadystatechange = function(){
+    
+    if (readFile.readyState=== 4 && readFile.status===200){
+      callback(readFile.responseText);
+    }
+  }
+  readFile.send(null);
+}
+/*
+readTextFile("products.json", function(text){
+  var data =  JSON.parse(text);
+  console.log(data);
+});
+
+*/

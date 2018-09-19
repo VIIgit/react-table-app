@@ -5,6 +5,10 @@ import root from 'window-or-global';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-select/dist/css/bootstrap-select.min.css';
+
+import ApisRenderer from './components/ApiRenderer';
+import ViewPicker from './components/ViewPicker';
+
 import './App.css';
 
 import 'popper.js';
@@ -25,8 +29,8 @@ const expandRow = {
   renderer: row => (   
     <div class="XXX">
       <p>{ `This Expand row is belong to rowKey ${row.id}` }</p>
-      <p>You can render anything here, also you can add additional data on every row object</p>
-     </div>
+      <ApisRenderer records={row.products} /> 
+    </div>
   )
 };
 
@@ -41,7 +45,6 @@ function linksOfLinks(cell, row, rowIndex, formatExtraData) {
     <div>
       OK
       <i > {row['id']} {row.id} 
-      
       </i> 
     </div>
   ) ;
@@ -64,87 +67,116 @@ class App extends Component {
     this.onViewChange(views[0].name);
   }
 
+  readTextFile(fileName, callback) {
 
+    var readFile = new XMLHttpRequest();
+    
+    readFile.overrideMimeType('application/json');
+    readFile.open('GET', fileName, true);
+    readFile.onreadystatechange = function(){
+      
+      if (readFile.readyState=== 4 && readFile.status===200){
+        callback( readFile.responseText);
+      }
+    }
+    readFile.send(null);
+  }
 
   onViewChange(value) {
-    // columns
-    //const columns = this.table.current.props.columns;
 
-    this.columns;
+    var view = _.find(views, function(view){ return view.name === value; });
 
-    views.forEach(view => {
-      if (view.name === value ){
+    this.changeView(view) ;
+  }
 
-        // data
-        while (this.columns.length) {
-          this.columns.pop();
-        }
-    
-        const viewCols = view.columns;
-        viewCols.forEach(col => {
-          if (col._formatter === 'linksOfLinks'){
-            col.formatter = linksOfLinks;
-            col.formatExtraData = [{ href:'a', alias: 'b'}];
-          };
-          if (col.filterMethod === 'multiSelection'){
+  changeView(view) {
 
-            const distinctValues = _.groupBy(view.records, col.dataField );
-            const keys = Object.keys(distinctValues);
-            const arrayToObject = keys.reduce((obj, item) => {
-              obj[item] = item;
-              return obj
-            }, {});
+    if (view.recordsFile){
+      this.readFile(view);
+      return;
+    }
 
-            col.filter= multiSelectFilter({
-              options: arrayToObject
-            });
- 
-            //col.formatter= 'cell => arrayToObject[cell];'
-            col.formatter = myFormatter;
-            col.formatExtraData= {
-              up: 'glyphicon glyphicon-chevron-up',
-              down: 'glyphicon glyphicon-chevron-down'
-            }
-            col.defaultValues= ["AA"], // default filtering value
-                                      
-            col.placeholder = "all";
-          }
-          else if (col.filterMethod === 'text'){  
-            col.filter= textFilter(
-                                    {
-                                      placeholder: 'My Custom PlaceHolder',  // custom the input placeholder
-                                      className: 'my-custom-text-filter', // custom classname on input
-                                      //defaultValue: 'test', // default filtering value
-                                      comparator: Comparator.LIKE, // default is Comparator.LIKE
-                                      //caseSensitive: true, // default is false, and true will only work when comparator is LIKE
-                                      style: { 'xx':'iuoiu' } // your custom styles on input
-                                    }
-            );
-          }
+    while (this.columns.length) {
+      this.columns.pop();
+    }
 
-          this.columns.push(col);
+    view.columns.forEach(col => {
+      if (col._formatter === 'linksOfLinks'){
+        col.formatter = linksOfLinks;
+        col.formatExtraData = [{ href:'a', alias: 'b'}];
+      };
+      if (col.filterMethod === 'multiSelection'){
+
+        const distinctValues = _.groupBy(view.records, col.dataField );
+        const keys = Object.keys(distinctValues);
+        const arrayToObject = keys.reduce((obj, item) => {
+          obj[item] = item;
+          return obj
+        }, {});
+
+        col.filter= multiSelectFilter({
+          options: arrayToObject
         });
 
-        // data
-        while (this.records.length) {
-          this.records.pop();
+        //col.formatter= 'cell => arrayToObject[cell];'
+        col.formatter = myFormatter;
+        col.formatExtraData= {
+          up: 'glyphicon glyphicon-chevron-up',
+          down: 'glyphicon glyphicon-chevron-down'
         }
-    
-        const viewRecords = view.records;
-        viewRecords.forEach(rec => {
-          this.records.push(rec);
-        });
-
+        col.defaultValues= ["AA"], // default filtering value
+                                  
+        col.placeholder = "all";
       }
+      else if (col.filterMethod === 'text'){  
+        col.filter= textFilter(
+            {
+              placeholder: 'My Custom PlaceHolder',  // custom the input placeholder
+              className: 'my-custom-text-filter', // custom classname on input
+              //defaultValue: 'test', // default filtering value
+              comparator: Comparator.LIKE, // default is Comparator.LIKE
+              //caseSensitive: true, // default is false, and true will only work when comparator is LIKE
+              style: { 'xx':'iuoiu' } // your custom styles on input
+            }
+        );
+      }
+
+      this.columns.push(col);
     });
 
+    this.updateRecords(view.records);
+
     this.setState(prevState => ({
-      selectedView: value
+      selectedView: view.name
     }));
   }
 
-  render() {
+  updateRecords(viewRecords){
+      // data
+      while (this.records.length) {
+        this.records.pop();
+      }
+  
+      viewRecords.forEach(rec => {
+        this.records.push(rec);
+      });
+  }
 
+  readFile(view){
+    var thisApp = this;
+    this.readTextFile(view.recordsFile, function(text){
+      //console.log(text);
+      var data =  JSON.parse(text);
+      view.records = data;
+      thisApp.changeView(view) ;
+    });
+    view.recordsFile = undefined;
+    view.records = [];
+
+    return;
+  }
+
+  render() {
 
     return (
       <div className="App container-fluid">
@@ -159,7 +191,6 @@ class App extends Component {
           {
             props => (
               <div>
-
                 <div class="row">
                   <div class="col-12 col-md-8">
                     <SearchBar { ...props.searchProps } />
@@ -176,51 +207,11 @@ class App extends Component {
                   classes = 'table-sm'
                   bordered={ false }
                 />
-
               </div>
             )
           }
         </ToolkitProvider>
       </div>
-    );
-  }
-}
-
-class ViewPicker extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {value: this.props.views[0].name};
-
-    let picker;
-
-    if (views && views.length > 0 ) {
-      picker = <ViewPicker views={views} onChange={this.onViewChange}/>;
-    } else {
-      picker = <span/>
-    }
-
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({value: event.target.value});
-    this.props.onChange(event.target.value);
-  }
-
-  createSelectItems() {
-    let items = [];         
-    this.props.views.forEach(element => {         
-         items.push(<option key={element.name} value={element.name}>{element.name}</option>);
-    })  
-    return items;
-  } 
-
-  render() {
-
-    return (
-      <select value={this.state.value} onChange={this.handleChange} class="selectpicker">
-        {this.createSelectItems()}
-      </select>
     );
   }
 }
