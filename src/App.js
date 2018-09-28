@@ -27,7 +27,7 @@ const { SearchBar } = Search;
 
 const expandRow = {
   renderer: row => (   
-    <div class="XXX">
+    <div className="XXX">
       <p>{ `This Expand row is belong to rowKey ${row.id}` }</p>
       <ApisRenderer records={row.products} /> 
     </div>
@@ -56,46 +56,45 @@ class App extends Component {
     super(props);
     this.table = React.createRef();
 
+    
     // This binding is necessary to make `this` work in the callback
     this.onViewChange = this.onViewChange.bind(this);
+    this.changeView = this.changeView.bind(this);
     // An empty data array as container
     this.records = [];
     // An single column of array as container (can't be empty)
     this.columns = [{
-                      dataField: 'id'
-                   }];
+      dataField: 'id'
+    }];
+    this.state = {};
     this.onViewChange(views[0].name);
   }
 
-  readTextFile(fileName, callback) {
-
-    var readFile = new XMLHttpRequest();
-    
-    readFile.overrideMimeType('application/json');
-    readFile.open('GET', fileName, true);
-    readFile.onreadystatechange = function(){
-      
-      if (readFile.readyState=== 4 && readFile.status===200){
-        callback( readFile.responseText);
-      }
-    }
-    readFile.send(null);
-  }
-
   onViewChange(value) {
-
     var view = _.find(views, function(view){ return view.name === value; });
-
     this.changeView(view) ;
   }
 
   changeView(view) {
 
-    if (view.recordsFile){
-      this.readFile(view);
+    if(view.dataSource){
+      view.records = [];
+      view.readData( this.changeView );
+      view.dataSource = undefined;
       return;
     }
 
+    this.updateColumns(view);
+    this.updateRecords(view.records);
+
+
+    this.setState(prevState => ({
+      selectedView: view.name
+    }));
+  }
+
+  updateColumns(view){
+    // clear columns
     while (this.columns.length) {
       this.columns.pop();
     }
@@ -124,8 +123,7 @@ class App extends Component {
           up: 'glyphicon glyphicon-chevron-up',
           down: 'glyphicon glyphicon-chevron-down'
         }
-        col.defaultValues= ["AA"], // default filtering value
-                                  
+        col.defaultValues= ["AA"]; // default filtering value  
         col.placeholder = "all";
       }
       else if (col.filterMethod === 'text'){  
@@ -144,15 +142,10 @@ class App extends Component {
       this.columns.push(col);
     });
 
-    this.updateRecords(view.records);
-
-    this.setState(prevState => ({
-      selectedView: view.name
-    }));
   }
 
   updateRecords(viewRecords){
-      // data
+      // clear data
       while (this.records.length) {
         this.records.pop();
       }
@@ -162,26 +155,12 @@ class App extends Component {
       });
   }
 
-  readFile(view){
-    var thisApp = this;
-    this.readTextFile(view.recordsFile, function(text){
-      //console.log(text);
-      var data =  JSON.parse(text);
-      view.records = data;
-      thisApp.changeView(view) ;
-    });
-    view.recordsFile = undefined;
-    view.records = [];
-
-    return;
-  }
-
   render() {
 
     return (
       <div className="App container-fluid">
 
-        <ToolkitProvider ref={this.table}
+        <ToolkitProvider ref={App.table}
           keyField="id"
           data={ this.records } 
           columns={ this.columns } 
@@ -191,11 +170,11 @@ class App extends Component {
           {
             props => (
               <div>
-                <div class="row">
-                  <div class="col-12 col-md-8">
+                <div className="row">
+                  <div className="col-12 col-md-8">
                     <SearchBar { ...props.searchProps } />
                   </div>
-                  <div class="col-6 col-md-4">
+                  <div className="col-6 col-md-4">
                     <ViewPicker views={views} onChange={this.onViewChange}/>                  
                   </div>
                 </div>

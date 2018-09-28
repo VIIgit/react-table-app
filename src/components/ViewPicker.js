@@ -1,12 +1,8 @@
-import React, { Component } from 'react';
-
+import React from 'react';
 class ViewPicker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {value: this.props.views[0].name};
-
-    let picker= <span/>
-    
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -26,7 +22,7 @@ class ViewPicker extends React.Component {
   render() {
 
     return (
-      <select value={this.state.value} onChange={this.handleChange} class="selectpicker">
+      <select value={this.state.value} onChange={this.handleChange} className="selectpicker">
         {this.createSelectItems()}
       </select>
     );

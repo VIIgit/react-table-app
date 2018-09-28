@@ -1,3 +1,17 @@
+function readTextFile(fileName, processData) {
+  'use strict'
+  var readFile = new XMLHttpRequest();
+  
+  readFile.overrideMimeType('application/json');
+  readFile.open('GET', fileName, true);
+  readFile.onreadystatechange = function(){
+    if (readFile.readyState=== 4 && readFile.status===200){
+      processData(readFile.responseText);
+    }
+  };
+  readFile.send(null);
+};
+
 var products = [{
   id: 1,
   name: 'Product1',
@@ -116,7 +130,19 @@ var views = [
   },
   {
     name: 'By C',
-    recordsFile: 'products.json',
+    records : [],
+    dataSource: {
+      url: 'products.json'
+    },
+    readData : function(callback){
+      'use strict'
+      var that = this;
+      readTextFile(this.dataSource.url, function(data){ 
+        that.records = JSON.parse(data);
+        callback(that);
+      });
+    },
     columns: columns3
   }
 ];
+
