@@ -16,22 +16,38 @@ var products = [{
   id: 1,
   name: 'Product1',
   price: 120,
-  category: 'AAA'
+  category: 'AAA',
+  subName: {
+    alias: 'alias'
+  },
+  img : 'A.png',
+  markdown : '## H1 \ncontent and a link to [react-markdown](https://github.com/rexxars/react-markdown)',
+  markdown2 : '## H2 \ncontent and a link to [react-markdown](https://github.com/rexxars/react-markdown)    \n![XX](./A.png)'
+
 }, {
   id: 2,
   name: 'Product2',
   price: 80009996,
-  category: 'A'
+  category: 'A',
+  img : 'B.png',
+  markdown : '## H1 \ncontent and a link to [react-markdown](https://github.com/rexxars/react-markdown)'
 }, {
   id: 3,
   name: 'Product3',
   price: 8006,
-  category: 'B'
+  category: 'B',
+  img : 'A.png'
 }, {
   id: 33,
   name: 'Product3B',
   price: 80033,
   category: 'B'
+}, {
+  id: 44,
+  name: 'Product3B',
+  price: 80033,
+  category: 'B',
+  img : 'B.png'
 }];
 
 
@@ -54,32 +70,62 @@ distinctKeys.forEach(function (attribute){
   products2.push({'id' : attribute , 'name' : attribute + '(' + distinct[attribute].length +')', 'products': distinct[attribute]});
 });
 
-/*
-
-var thisValue = {};
-const attr = 'sort';
-columns2.map(function(item){
-  'use strict';
-  console.log(item);
-  if (!thisValue[item[attr]]){
-    thisValue[item[attr]] = [];
-  }
-  thisValue[item[attr]].push(item);
-}, thisValue);
-*/
+var prev = '...';
 
 var columns1 = [{
-  dataField: 'id',
-  text: 'Product ID',
+  dataField: 'name',
+  text: 'Product Name',
   align: 'left'
 }, {
-  dataField: 'name',
-  text: 'Product Name'
+  dataField: 'subName.alias',
+  text: 'Alias',
+  align: 'left'
 }, {
+  dataField: 'img',
+  text: 'Image',
+  _formatter: 'image',
+  sort: true,
+  align: 'left',
+  formatExtraData: {heightx: 60, width: 60}
+}, {
+  dataField: 'markdown',
+  text: 'Marrkdown',
+  _formatter: 'markdown',
+  sort: true,
+  align: 'left'
+}, {
+  dataField: 'category',
+  text: 'Category',
+  _filter: 'multiSelection',
+  defaultValue: ['B'],
+  sort: true,
+  align: 'left'
+}, 
+
+{
   dataField: 'price',
   text: 'Product Price',
   sort: true,
-  align: 'right'
+  align: 'right',
+
+  classes: (cell, row, rowIndex, colIndex)  =>{
+    'use strict'
+    if (rowIndex % 2 === 0) {
+      return 'demo-row-even';
+    }
+    return 'demo-row-odd';
+  },
+  style: (cell, row, rowIndex, colIndex) => {
+    'use strict'
+    if (rowIndex % 2 === 0) {
+      return {
+        backgroundColor: '#81c784'
+      };
+    }
+    return {
+      backgroundColor: '#c8e6c9'
+    };
+  }
 }];
 
 var columns2 = [{
@@ -88,12 +134,11 @@ var columns2 = [{
 }, {
   dataField: 'name',
   text: 'Product Name B',
-  filterMethod: 'text',
   sort: true
 }, {
   dataField: 'category',
   text: 'Product Category B',
-  filterMethod: 'multiSelection',
+  _filter: 'multiSelection',
   sort: true
 }, {
   dataField: 'calc',
@@ -107,13 +152,11 @@ var columns3 = [{
 }, {
   dataField: 'name',
   text: 'Product Name B',
-  filterMethod: 'text',
   sort: true
 }, {
   dataField: 'alist',
   text: 'List B',
   _formatter: 'linksOfLinks',
-  _formatterData: 'alistFormatterData',
   sort: true
 }];
 
@@ -121,7 +164,24 @@ var views = [
   {
     name: 'By A',
     records: products,
-    columns: columns1
+    columns: columns1,
+    expandRowAttribute: 'markdown,markdown2',
+    rowStyle: (row, rowIndex) => {
+      const style = {};
+     
+      if (rowIndex === 0 || prev !== row['img']){
+        prev = row['img'];
+        style.fontWeight = 'bold';
+        style.marginTop=  "40px";
+        if (rowIndex > 0 ){
+          style.WebkitBoxShadow=  "inset 0px 11px 24px -15px rgba(0,0,0,0.59)";
+          style.MozBoxShadow=  "inset 0px 11px 24px -15px rgba(0,0,0,0.59)";
+          style.BoxShadow=  "inset 0px 11px 24px -15px rgba(0,0,0,0.59)";
+        }
+      }
+
+      return style;
+    }
   },
   {
     name: 'By B',

@@ -78,6 +78,18 @@ npm install bootstrap --save
 npm install bootstrap-select --save
 ```
 
+[react-markdown](https://github.com/rexxars/react-markdown)
+
+```sh
+npm install react-markdown --save
+```
+
+[babel-polyfill](https://babeljs.io/docs/en/babel-polyfill) for IE11
+
+```sh
+npm install babel-polyfill --save
+```
+
 ## Cleanup generated files
 
 "ajv-keywords": "^3.2.0",
